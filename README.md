@@ -1,4 +1,4 @@
-<img src="https://www.seekpng.com/png/full/39-391516_glowing-purple-neon-icon-business-home-pink-image.png" width="120" height="120">
+<img src="FINAL SVG.svg" width="120" height="120">
 
 # SimpleHomeSQL
 
