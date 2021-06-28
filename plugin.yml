@@ -1,0 +1,6 @@
+---
+name: SimpleHomeMost
+version: 0.0.1
+main: Mateo\SimpleHomeMost\Main
+api: 3.21.0
+...
