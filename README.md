@@ -2,7 +2,7 @@
 
 # SimpleHomeSQL
 
-The best optimized home plugin on the go!
+The best optimized PoketMine-MP home plugin on the market!
 
 ### You are looking for a home plugin capable of keeping up a colossal player rate ?
 
