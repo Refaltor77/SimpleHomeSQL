@@ -1,4 +1,4 @@
-<img src="FINAL SVG.svg" width="120" height="120">
+<img src="FINAL PNG.png" width="120" height="120">
 
 # SimpleHomeSQL
 
