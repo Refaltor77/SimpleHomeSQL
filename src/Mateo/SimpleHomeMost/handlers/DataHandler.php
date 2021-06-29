@@ -61,6 +61,7 @@ class DataHandler
         if (!$config->exists("countdown_teleport"))
         {
             $config->set("countdown_teleport", 5);
+            $config->set("max_home", 5);
             $config->save();
         }
 
@@ -96,23 +97,29 @@ class DataHandler
     {
         $patch = self::getPatchDatabase();
         $position_encoded = base64_encode(serialize(["vector3" => $position->asVector3(), "level" => $position->getLevel()->getFolderName()]));
+        $max_home = self::$config["max_home"];
 
-        $a = new DatabaseAsync(function (DatabaseAsync $databaseAsync) use ($patch, $uuid, $name, $position_encoded){
+        $a = new DatabaseAsync(function (DatabaseAsync $databaseAsync) use ($patch, $uuid, $name, $position_encoded, $max_home){
 
             $ddd = DataHandler::getAsyncSession($patch);
             $results = $ddd->query('SELECT home_name FROM homes WHERE uuid = "'. $uuid .'"');
             $result = [];
             while ($row = $results->fetchArray(SQLITE3_ASSOC)) $result[] = $row;
             $all = array_column($result, "home_name");
+            $home_number = count($result);
 
-            if (empty($result) or !in_array($name, $all))
+            if($home_number >= $max_home)
+            {
+                $databaseAsync->setResult(["error" => true, "errorMessage" => "max_home_set", "data" => []]);
+            }elseif (empty($result) or !in_array($name, $all))
             {
                 $ddd->query('INSERT INTO homes (uuid, home_name, home_vector, created_at) VALUES ("'. $uuid.'", "'. $name.'", "'. $position_encoded.'", '. time().');');
                 $databaseAsync->setResult(["error" => false, "errorMessage" => $ddd->lastErrorMsg(), "data" => []]);
-
             }else{
                 $databaseAsync->setResult(["error" => true, "errorMessage" => "This home name is already used", "data" => []]);
+
             }
+
             $ddd->close();
         }, function (DatabaseAsync $databaseAsync, Server $server) use ($uuid){
             $player = $server->getPlayerByRawUUID($uuid);
@@ -122,7 +129,12 @@ class DataHandler
                 {
                     $player->sendMessage("§a» The home has been saved.");
                 }else{
-                    $player->sendMessage("§c» The home already exists.");
+                    if ($databaseAsync->getResult()["errorMessage"] === "max_home_set")
+                    {
+                        $player->sendMessage("§c» Your are max home limit.");
+                    }else{
+                        $player->sendMessage("§c» The home already exists.");
+                    }
                 }
             }
         });
