@@ -1,0 +1,8 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Refaltor77/SimpleHomeSQL
+build-by-default: true
+branches:
+- main
+projects:
+  SimpleHomeSQL:
+    path: ""
+...
